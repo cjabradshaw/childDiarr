@@ -1,6 +1,6 @@
 # Predictors of diarrhoea in children under five years old
 Determine the most important predictors of diarrhoea in children under five in Southeast Asia by exploring the spatiotemporal association between diarrhoeal incidence and various behavioural, socio-demographic, and environmental factors.
-<img align="right" src="www/stomachache.jpg" alt="" width="400" style="margin-top: 20px">
+<img align="right" src="www/stomachache.jpg" alt="" width="200" style="margin-top: 20px">
 <br>
 <br>
 Dr <a href="https://globalecologyflinders.com/people/#DIRECTOR">Syeda Hira Fatima</a><br>
