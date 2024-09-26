@@ -8,7 +8,7 @@ Dr <a href="https://globalecologyflinders.com/people/#DIRECTOR">Syeda Hira Fatim
 September 2023<br>
 <a href=mailto:syeda.fatima@flinders.edu.au>e-mail</a> <br>
 <br>
-and
+and<br>
 <br>
 Prof <a href="https://globalecologyflinders.com/people/#DIRECTOR">Corey J. A. Bradshaw</a> <br>
 <a href="http://globalecologyflinders.com" target="_blank">Global Ecology</a> | <em><a href="https://globalecologyflinders.com/partuyarta-ngadluku-wardli-kuu/" target="_blank">Partuyarta Ngadluku Wardli Kuu</a></em>, <a href="http://flinders.edu.au" target="_blank">Flinders University</a>, Adelaide, Australia <br>
@@ -29,4 +29,4 @@ September 2023<br>
 - <code>boot</code>
 - <code>truncnorm</code>
 
-<p><a href="https://www.flinders.edu.au"><img align="bottom-left" src="www/Flinders_University_Logo_Horizontal_RGB_Master.png" alt="Flinders University" width="150" style="margin-top: 20px"></a> &nbsp; <a href="https://globalecologyflinders.com"><img align="bottom-left" src="www/GEL Logo Kaurna New Transp.png" alt="Global Ecology Lab" width="85" style="margin-top: 20px"></a> &nbsp; &nbsp; <a href="https://www.uwa.edu.au/"><img align="bottom-left" src="www/uwa2.png" alt="UWA" width="100" style="margin-top: 20px"></a> &nbsp; &nbsp; <a href="https://www.thekids.org.au"><img align="bottom-left" src="www/TheKids-Logo.png" alt="The Kids Research Institute" width="90" style="margin-top: 20px"></a>
+<p><a href="https://www.flinders.edu.au"><img align="bottom-left" src="www/Flinders_University_Logo_Horizontal_RGB_Master.png" alt="Flinders University" width="150" style="margin-top: 20px"></a> &nbsp; <a href="https://globalecologyflinders.com"><img align="bottom-left" src="www/GEL Logo Kaurna New Transp.png" alt="Global Ecology Lab" width="85" style="margin-top: 20px"></a> &nbsp; &nbsp; <a href="https://www.uwa.edu.au/"><img align="bottom-left" src="www/UWA.png" alt="UWA" width="100" style="margin-top: 20px"></a> &nbsp; &nbsp; <a href="https://www.thekids.org.au"><img align="bottom-left" src="www/TheKids-Logo.png" alt="The Kids Research Institute" width="90" style="margin-top: 20px"></a>
