@@ -5,23 +5,15 @@
 #rm(list = ls())
 
 # Load necessary libraries
-library(foreign)
-library(haven)
-library(sf)
-library(sp)
 library(ggplot2)
 library(dplyr)
-library(cowplot)
 library(tidyr)
-library(leaflet)
-library(mice)
-library(caret)
-library(reshape2)
-library(GGally)
 library(dismo)
 library(gbm)
 library(spatstat.random)
 library(ggpubr)
+library(usdm)
+library(truncnorm)
 
 # functions
 estBetaParams <- function(mu, var) {
