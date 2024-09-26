@@ -15,7 +15,6 @@ Prof <a href="https://globalecologyflinders.com/people/#DIRECTOR">Corey J. A. Br
 September 2024<br>
 <a href=mailto:corey.bradshaw@flinders.edu.au>e-mail</a> <br>
 <br>
-<br>
 Project collaborators: Dr <a href="https://www.researchgate.net/profile/Melinda-Judge">Melinda Judge</a>, Prof <a href="https://research-repository.uwa.edu.au/en/persons/peter-le-souef">Peter Le Souëf</a>, Dr <a href="https://loop.frontiersin.org/people/2658416/overview">Lewis Weeda</a>, <a href="mailto:Naomi.Hemy@thekids.org.au">Naomi Henry</a>
 <br>
 ## <a href="https://github.com/cjabradshaw/childDiarr/tree/main/scripts">Scripts</a>
