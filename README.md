@@ -17,10 +17,10 @@ September 2023<br>
 <br>
 
 ## <a href="https://github.com/cjabradshaw/childDiarr/tree/main/scripts">Scripts</a>
-- <code>DHSDiarrAnalysis.R</code>: R code to reproduce the resampled boosted regression tree analysis for determining the relationships between probability of diarrhoea, and socio-economic, maternal, child, cliamte data.
+- <code>DHSDiarrAnalysis.R</code>: R code to reproduce the resampled boosted regression tree analysis for determining the relationships between probability of diarrhoea, and socio-economic, maternal, child, climate data.
 
 ## <a href="https://github.com/cjabradshaw/childDiarr/tree/main/data/brtdata">Data</a>
-- <em><a href="https://github.com/cjabradshaw/childDarr/blob/main/data/climhealth/healthclim.csv">healthclim.csv</a></em>
+- <em>DHSclusterLevelDiarrData.csv.zip</em>: <a href="https://dhsprogram.com/data/">Demographic Health Survey</a> data summarised by cluster with central parameter (mean, proportion, etc.) and variance per cluster. Overlaid (cluster-level) climate data derived from <a href="https://www.worldclim.org/">WorldClim</a> <a href="https://www.worldclim.org/data/bioclim.html">bioclimatic variables</a> (mean annual temperature, temperature annual range, total annual precipitation, precipitation seasonality, and precipitation of the driest quarter).
 
 ## Required R libraries
 - <code>dismo</code>
