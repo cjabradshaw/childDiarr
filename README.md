@@ -18,7 +18,7 @@ September 2024<br>
 Project collaborators: Dr <a href="https://www.researchgate.net/profile/Melinda-Judge">Melinda Judge</a>, Prof <a href="https://research-repository.uwa.edu.au/en/persons/peter-le-souef">Peter Le Souëf</a>, Dr <a href="https://loop.frontiersin.org/people/2658416/overview">Lewis Weeda</a>, <a href="mailto:Naomi.Hemy@thekids.org.au">Naomi Henry</a>
 <br>
 ## <a href="https://github.com/cjabradshaw/childDiarr/tree/main/scripts">Scripts</a>
-<img align="right" src="www/DHSmap.jpg" alt="" width="200" style="margin-top: 20px">
+<img align="right" src="www/DHSmap.jpg" alt="" width="400" style="margin-top: 20px">
 - <code>DHSDiarrAnalysis.R</code>: R code to reproduce the resampled boosted regression tree analysis for determining the relationships between probability of diarrhoea, and socio-economic, maternal, child, climate data.
 
 ## <a href="https://github.com/cjabradshaw/childDiarr/tree/main/data/brtdata">Data</a>
