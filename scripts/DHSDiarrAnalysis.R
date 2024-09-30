@@ -273,7 +273,7 @@ for (i in 1:iter) {
                            learning.rate = 0.001, bag.fraction=0.5, tree.complexity = 2,
                            silent=T, tolerance.method = "auto")
 
-  if (c == 1 & is.null(brt.fit.rsmp)==F) {
+  if (i == 1 & is.null(brt.fit.rsmp)==F) {
     brt.fit.rsmp.old <- brt.fit.rsmp
   }
   
@@ -572,7 +572,7 @@ plot(PHASE2vars$wbmimn, PHASE2vars$diarp, pch=19, xlab="woman bmi", ylab="diarrh
                              learning.rate = 0.00025, bag.fraction=0.5, tree.complexity = 2,
                              silent=T, tolerance.method = "auto")
     
-    if (c == 1 & is.null(brt.fit.rsmp)==F) {
+    if (i == 1 & is.null(brt.fit.rsmp)==F) {
       brt.fit.rsmp.old <- brt.fit.rsmp
     }
     
@@ -824,7 +824,7 @@ for (i in 1:iter) {
                            learning.rate = 0.000001, bag.fraction=0.7, tree.complexity = 2,
                            silent=T, tolerance.method = "auto", step.size=40)
   
-  if (c == 1 & is.null(brt.fit.rsmp)==F) {
+  if (i == 1 & is.null(brt.fit.rsmp)==F) {
     brt.fit.rsmp.old <- brt.fit.rsmp
   }
   
@@ -1088,7 +1088,7 @@ for (i in 1:iter) {
                            learning.rate = 0.001, bag.fraction=0.5, tree.complexity = 2,
                            silent=T, tolerance.method = "auto")
   
-  if (c == 1 & is.null(brt.fit.rsmp)==F) {
+  if (i == 1 & is.null(brt.fit.rsmp)==F) {
     brt.fit.rsmp.old <- brt.fit.rsmp
   }
   
@@ -1369,7 +1369,7 @@ for (i in 1:iter) {
                            learning.rate = 0.001, bag.fraction=0.5, tree.complexity = 2,
                            silent=T, tolerance.method = "auto", step.size=40)
   
-  if (c == 1 & is.null(brt.fit.rsmp)==F) {
+  if (i == 1 & is.null(brt.fit.rsmp)==F) {
     brt.fit.rsmp.old <- brt.fit.rsmp
   }
   
