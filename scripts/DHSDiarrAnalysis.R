@@ -471,7 +471,7 @@ PHASE1.ri.sort
 PHASE1.ri.plt <- ggplot(PHASE1.ri.sort) +
   geom_bar(aes(x=reorder(row.names(PHASE1.ri.sort), ri.med), y=ri.med), stat="identity", fill="blue", alpha=0.7) +
   geom_errorbar( aes(x=row.names(PHASE1.ri.sort), ymin=ri.lo, ymax=ri.up),
-                 width=0.4, colour="black", alpha=0.9, size=0.3)
+                 linewidth=0.4, colour="black", alpha=0.9, size=0.3)
 PHASE1.ri.plt + coord_flip() +
   xlab("relative influence") + ylab("")
 
@@ -710,7 +710,7 @@ plot(PHASE2vars$wbmimn, PHASE2vars$diarp, pch=19, xlab="woman bmi", ylab="diarrh
   PHASE2.ri.plt <- ggplot(PHASE2.ri.sort) +
     geom_bar(aes(x=reorder(row.names(PHASE2.ri.sort), ri.med), y=ri.med), stat="identity", fill="blue", alpha=0.7) +
     geom_errorbar( aes(x=row.names(PHASE2.ri.sort), ymin=ri.lo, ymax=ri.up),
-                   width=0.4, colour="black", alpha=0.9, size=0.3)
+                   linewidth=0.4, colour="black", alpha=0.9, size=0.3)
   PHASE2.ri.plt + coord_flip() +
     xlab("relative influence") + ylab("")
   
@@ -992,7 +992,7 @@ PHASE3.ri.sort
 PHASE3.ri.plt <- ggplot(PHASE3.ri.sort) +
   geom_bar(aes(x=reorder(row.names(PHASE3.ri.sort), ri.med), y=ri.med), stat="identity", fill="blue", alpha=0.7) +
   geom_errorbar( aes(x=row.names(PHASE3.ri.sort), ymin=ri.lo, ymax=ri.up),
-                 width=0.4, colour="black", alpha=0.9, size=0.3)
+                 linewidth=0.4, colour="black", alpha=0.9, size=0.3)
 PHASE3.ri.plt + coord_flip() +
   xlab("relative influence") + ylab("")
 
@@ -1234,7 +1234,7 @@ PHASE4.ri.sort
 PHASE4.ri.plt <- ggplot(PHASE4.ri.sort) +
   geom_bar(aes(x=reorder(row.names(PHASE4.ri.sort), ri.med), y=ri.med), stat="identity", fill="blue", alpha=0.7) +
   geom_errorbar( aes(x=row.names(PHASE4.ri.sort), ymin=ri.lo, ymax=ri.up),
-                 width=0.4, colour="black", alpha=0.9, size=0.3)
+                 linewidth=0.4, colour="black", alpha=0.9, size=0.3)
 PHASE4.ri.plt + coord_flip() +
   xlab("relative influence") + ylab("")
 
@@ -1531,7 +1531,7 @@ PHASE5.ri.sort
 PHASE5.ri.plt <- ggplot(PHASE5.ri.sort) +
   geom_bar(aes(x=reorder(row.names(PHASE5.ri.sort), ri.med), y=ri.med), stat="identity", fill="blue", alpha=0.7) +
   geom_errorbar( aes(x=row.names(PHASE5.ri.sort), ymin=ri.lo, ymax=ri.up),
-                 width=0.4, colour="black", alpha=0.9, size=0.3)
+                 linewidth=0.4, colour="black", alpha=0.9, size=0.3)
 PHASE5.ri.plt + coord_flip() +
   xlab("relative influence") + ylab("")
 
