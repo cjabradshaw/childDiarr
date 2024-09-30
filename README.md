@@ -19,6 +19,11 @@ Project collaborators: Dr <a href="https://www.researchgate.net/profile/Melinda-
 <br>
 ## <a href="https://github.com/cjabradshaw/childDiarr/tree/main/scripts">Scripts</a>
 <img align="right" src="www/DHSmap.jpg" alt="" width="400" style="margin-top: 20px">
+- <code>DHSDiarrProcessing_1.R</code>: R code to load and merge DHS survey and GPS data and select the appropriate list of variables.
+- <code>DHSDiarrProcessing_2.R</code>: R code to preprocess, recode, and create new variables where necessary.
+- <code>DHSDiarrProcessing_3.R</code>: R code for imputation of variables with missing data.
+- <code>DHSDiarrProcessing_4.R</code>: R code for processing of raster data.
+- <code>DHSDiarrProcessing_5.R</code>: R code for processing of variables at the cluster level and standardization.
 - <code>DHSDiarrAnalysis.R</code>: R code to reproduce the resampled boosted regression tree analysis for determining the relationships between probability of diarrhoea, and socio-economic, maternal, child, climate data.
 
 ## <a href="https://github.com/cjabradshaw/childDiarr/tree/main/data/brtdata">Data</a>
