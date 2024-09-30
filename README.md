@@ -31,7 +31,7 @@ Project collaborators: Dr <a href="https://www.researchgate.net/profile/Melinda-
 - <em>DHSclusterLevelDiarrData.csv.zip</em>: <a href="https://dhsprogram.com/data/">Demographic Health Survey</a> data summarised by cluster with central parameter (mean, proportion, etc.) and variance per cluster. Overlaid (cluster-level) climate data derived from <a href="https://www.worldclim.org/">WorldClim</a> <a href="https://www.worldclim.org/data/bioclim.html">bioclimatic variables</a> (mean annual temperature, temperature annual range, total annual precipitation, precipitation seasonality, and precipitation of the driest quarter). Unzip .csv data file prior to analysis.
 
 ## Required R libraries
-- <code>dismo</code>, <code>dplyr</code>, <code>ggplot2</code>, <code>ggpubr</code>, <code>gbm</code>, <code>spatstat.random</code>, <code>tidyr</code>, <code>truncnorm</code>, <code>usdm</code>
+- <code>cowplot</code>, <code>dismo</code>, <code>dplyr</code>, <code>foreign</code>, <code>gbm</code>, <code>ggplot2</code>, <code>ggpubr</code>, <code>haven</code>, <code>leaflet</code>, <code>mice</code>, <code>sf</code>, <code>sp</code>, <code>spatstat.random</code>, <code>tidyr</code>, <code>truncnorm</code>, <code>usdm</code>
 
 <br>
 <br>
