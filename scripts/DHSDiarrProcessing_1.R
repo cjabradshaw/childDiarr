@@ -2,10 +2,10 @@
 # Hira Fatima & Corey Bradshaw
 # September 2024
 
-# 1. we will define the list of all plausible vairables for the analysis based on previous extensive literature review and desinged hypothesis
-# 2. we will read the files for survey data files and GPS data
-# 3. we will merge each survey file with its GPS file using cluster number variable
-# 4. we will create dummy variables for DHS 6 or 7 or 8, where vairable was not present in any of these, assigning NA values
+# 1. define the list of all plausible variables for the analysis based on previous extensive literature review and desinged hypothesis
+# 2. read the files for survey data files and GPS data
+# 3. merge each survey file with its GPS file using cluster number variable
+# 4. create dummy variables for Demographic Health Surveys 6 or 7 or 8, where vairable was not present in any of these, assigning NA values
 # 5. cleanup the environment to keep necessary datasets
 
 # Load required packages
