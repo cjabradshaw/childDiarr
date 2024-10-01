@@ -1,4 +1,5 @@
 # Predictors of diarrhoea in children under five years old
+<a href="10.5281/zenodo.13864715"><img src="https://zenodo.org/badge/13864715.svg" alt="DOI"></a>
 Determine the most important predictors of diarrhoea in children under five in South and Southeast Asia (Pakistan, India, Nepal, Bangladesh, Myanmar, Cambodia, Philippines, Timor-Leste) by exploring the spatiotemporal association between diarrhoeal incidence and various behavioural, socio-demographic, and environmental factors.
 <img align="right" src="www/stomachache.jpg" alt="" width="200" style="margin-top: 20px">
 <br>
