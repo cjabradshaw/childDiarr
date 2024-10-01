@@ -180,7 +180,7 @@ plot(PHASE1vars$hhmemmn, PHASE1vars$diarp, pch=19, xlab="household size", ylab="
 plot(PHASE1vars$hhsexp, PHASE1vars$diarp, pch=19, xlab="household head gender", ylab="diarrhoea pr")
 
 ## iterate resampled boosted regression trees
-iter <- 100
+iter <- 1000
 eq.sp.points <- 100
 
 # create storage arrays
@@ -508,7 +508,7 @@ plot(PHASE2vars$wbmimn, PHASE2vars$diarp, pch=19, xlab="woman bmi", ylab="diarrh
   
   
   ## iterate resampled boosted regression trees
-  iter <- 100
+  iter <- 1000
   eq.sp.points <- 100
   
   # create storage arrays
@@ -751,7 +751,7 @@ plot(PHASE3vars$wastmn, PHASE3vars$diarp, pch=19, xlab="wasting pr", ylab="diarr
 
 
 ## iterate resampled boosted regression trees
-iter <- 100
+iter <- 1000
 eq.sp.points <- 100
 
 # create storage arrays
@@ -1033,7 +1033,7 @@ plot(PHASE4vars$MATmn, PHASE4vars$diarp, pch=19, xlab="mean annual temperature",
 
 
 ## iterate resampled boosted regression trees
-iter <- 100
+iter <- 1000
 eq.sp.points <- 100
 
 # create storage arrays
@@ -1264,21 +1264,21 @@ print(c(PHASE4.CV.cor.lo,PHASE4.CV.cor.med,PHASE4.CV.cor.up)) # climate
 
 
 ## FINAL COMBINED PHASE5
-## variables to keep: wedu, hhmem, pnc, fem, drugip, TAR, PRCP
+## variables to keep: wedu, hhmem, pnc, wbmi, fem, drugip, TAR, PRCP
 PHASE5vars <- u5dat %>%
-  dplyr::select(cntry, clust, diarp, diarv, wedumn, wedusd, hhmemmn, hhmemsd, pncp, pncv,
+  dplyr::select(cntry, clust, diarp, diarv, wedumn, wedusd, hhmemmn, hhmemsd, pncp, pncv, wbmimn, wbmisd,
                 femp, femv, drugipp, drugipv, TARmn, TARsd, PRCPmn, PRCPsd)
 head(PHASE5vars)
-head(PHASE5vars[,c(5,7,9,11,13,15,17)])
+head(PHASE5vars[,c(5,7,9,11,13,15,17,19)])
 dim(PHASE5vars)
 PHASE5vars.naomit <- na.omit(PHASE5vars)
 dim(PHASE5vars.naomit)
 
 # variance inflation factor
-usdm::vif(PHASE5vars.naomit[,c(5,7,9,11,13,15,17)])
+usdm::vif(PHASE5vars.naomit[,c(5,7,9,11,13,15,17,19)])
 
 # deterministic BRT with means only
-PHASE5.brt.dtrm.mn <- gbm.step(PHASE5vars.naomit, gbm.x = attr(PHASE5vars.naomit, "names")[c(5,7,9,11,13,15,17)],
+PHASE5.brt.dtrm.mn <- gbm.step(PHASE5vars.naomit, gbm.x = attr(PHASE5vars.naomit, "names")[c(5,7,9,11,13,15,17,19)],
                                gbm.y = attr(PHASE5vars.naomit, "names")[3],
                                family="gaussian", max.trees=1000000, tolerance = 0.01,
                                learning.rate = 0.001, bag.fraction=0.75, tree.complexity = 2, step.size=30)
@@ -1300,13 +1300,13 @@ iter <- 1000
 eq.sp.points <- 100
 
 # create storage arrays
-out.colnames <- c("wedu", "hhmem", "pnc", "fem", "drugip", "TAR", "PRCP")
-val.arr <- pred.arr <- array(data = NA, dim=c(eq.sp.points, length=7, iter),
+out.colnames <- c("wedu", "hhmem", "pnc", "wbmi", "fem", "drugip", "TAR", "PRCP")
+val.arr <- pred.arr <- array(data = NA, dim=c(eq.sp.points, length=8, iter),
                              dimnames=list(paste("x",1:eq.sp.points,sep=""),
                                            out.colnames, paste("i",1:iter, sep="")))
 
 # create storage vectors
-CV.cor.vec <- CV.cor.se.vec <- wedu.ri <- hhmem.ri <- pnc.ri <- fem.ri <- drugip.ri <-
+CV.cor.vec <- CV.cor.se.vec <- wedu.ri <- hhmem.ri <- pnc.ri <- wbmi.ri <- fem.ri <- drugip.ri <-
     TAR.ri <- PRCP.ri <- rep(NA, iter)
 
 for (i in 1:iter) {
@@ -1333,6 +1333,7 @@ for (i in 1:iter) {
   # continuous
   wedu.stoch <- truncnorm::rtruncnorm(length(dat.cresamp$wedumn), a=0, b=Inf, mean=dat.cresamp$wedumn, sd=dat.cresamp$wedusd) # woman's education
   hhmem.stoch <- truncnorm::rtruncnorm(length(dat.cresamp$hhmemmn), a=0, b=Inf, mean=dat.cresamp$hhmemmn, sd=dat.cresamp$hhmemsd) # household members
+  wbmi.stoch <- truncnorm::rtruncnorm(length(dat.cresamp$wbmimn), a=0, b=Inf, mean=dat.cresamp$wbmimn, sd=dat.cresamp$wbmisd) # woman's bmi
   TAR.stoch <- rnorm(length(dat.cresamp$TARmn), mean=dat.cresamp$TARmn, sd=dat.cresamp$TARsd) # temperature annual range
   PRCP.stoch <- rnorm(length(dat.cresamp$PRCPmn), mean=dat.cresamp$PRCPmn, sd=dat.cresamp$PRCPsd) # annual precipitation
   
@@ -1353,9 +1354,9 @@ for (i in 1:iter) {
   pnc.stoch <- ifelse(is.na(pnc.stch==T), 0, pnc.stch) # postnatal checks probability
   
   ## collect resampled variables into single dataframe
-  dat.resamp <- data.frame(diar.stoch,wedu.stoch,hhmem.stoch,pnc.stoch,fem.stoch,
+  dat.resamp <- data.frame(diar.stoch,wedu.stoch,hhmem.stoch,pnc.stoch,wbmi.stoch,fem.stoch,
                            drugip.stoch,TAR.stoch,PRCP.stoch)
-  colnames(dat.resamp) <- c("diar", "wedu", "hhmem", "pnc", "fem", "drugip", "TAR", "PRCP")
+  colnames(dat.resamp) <- c("diar", "wedu", "hhmem", "pnc", "wbmi", "fem", "drugip", "TAR", "PRCP")
   
   # scale
   dat.resamp.sc <- na.omit(as.data.frame(scale(dat.resamp, center=T, scale=T)))
@@ -1363,7 +1364,7 @@ for (i in 1:iter) {
   
   
   # boosted regression tree
-  brt.fit.rsmp <- gbm.step(dat.resamp.sc, gbm.x = attr(dat.resamp.sc, "names")[c(2:8)],
+  brt.fit.rsmp <- gbm.step(dat.resamp.sc, gbm.x = attr(dat.resamp.sc, "names")[c(2:9)],
                            gbm.y = attr(dat.resamp.sc, "names")[1],
                            family="gaussian", max.trees=1000000, tolerance = 0.00001,
                            learning.rate = 0.001, bag.fraction=0.5, tree.complexity = 2,
@@ -1375,7 +1376,7 @@ for (i in 1:iter) {
   
   
   if (is.null(brt.fit.rsmp) == T) {
-    brt.fit.rsmp <- gbm.step(dat.resamp.sc, gbm.x = attr(dat.resamp.sc, "names")[c(2:8)],
+    brt.fit.rsmp <- gbm.step(dat.resamp.sc, gbm.x = attr(dat.resamp.sc, "names")[c(2:9)],
                              gbm.y = attr(dat.resamp.sc, "names")[1],
                              family="gaussian", max.trees=1000000, tolerance = 0.000001,
                              learning.rate = 0.0001, bag.fraction=0.5, tree.complexity = 2,
@@ -1394,18 +1395,19 @@ for (i in 1:iter) {
   wedu.ri[i] <- summ.fit$rel.inf[which(summ.fit$var == out.colnames[1])]
   hhmem.ri[i] <- summ.fit$rel.inf[which(summ.fit$var == out.colnames[2])]
   pnc.ri[i] <- summ.fit$rel.inf[which(summ.fit$var == out.colnames[3])]
-  fem.ri[i] <- summ.fit$rel.inf[which(summ.fit$var == out.colnames[4])]
-  drugip.ri[i] <- summ.fit$rel.inf[which(summ.fit$var == out.colnames[5])]
-  TAR.ri[i] <- summ.fit$rel.inf[which(summ.fit$var == out.colnames[6])]
-  PRCP.ri[i] <- summ.fit$rel.inf[which(summ.fit$var == out.colnames[7])]
+  wbmi.ri[i] <- summ.fit$rel.inf[which(summ.fit$var == out.colnames[4])]
+  fem.ri[i] <- summ.fit$rel.inf[which(summ.fit$var == out.colnames[5])]
+  drugip.ri[i] <- summ.fit$rel.inf[which(summ.fit$var == out.colnames[6])]
+  TAR.ri[i] <- summ.fit$rel.inf[which(summ.fit$var == out.colnames[7])]
+  PRCP.ri[i] <- summ.fit$rel.inf[which(summ.fit$var == out.colnames[8])]
   
   # goodness of fit
   CV.cor.vec[i] <- 100*brt.fit.rsmp$cv.statistics$correlation.mean
   CV.cor.se.vec[i] <- 100*brt.fit.rsmp$cv.statistics$correlation.se
   
   # response curves
-  RESP.val <- RESP.pred <- matrix(data=NA, nrow=eq.sp.points, ncol=7)
-  for (p in 1:7) {
+  RESP.val <- RESP.pred <- matrix(data=NA, nrow=eq.sp.points, ncol=8)
+  for (p in 1:8) {
     RESP.val[,p] <- plot.gbm(brt.fit.rsmp, i.var=p, continuous.resolution = eq.sp.points, return.grid=T)[,1]
     RESP.pred[,p] <- plot.gbm(brt.fit.rsmp, i.var=p, continuous.resolution = eq.sp.points, return.grid=T)[,2]
   } # end p
@@ -1423,7 +1425,7 @@ for (i in 1:iter) {
 
 # kappa method to reduce effects of outliers on bootstrap estimates
 kappa <- 2
-kappa.n <- 7
+kappa.n <- 8
 pred.update <- pred.arr[,,1:iter]
 
 for (k in 1:kappa.n) {
@@ -1449,6 +1451,7 @@ PHASE5.CV.cor.se.update <- CV.cor.se.vec[1:iter]
 wedu.ri.update <- wedu.ri[1:iter]
 hhmem.ri.update <- hhmem.ri[1:iter]
 pnc.ri.update <- pnc.ri[1:iter]
+wbmi.ri.update <- wbmi.ri[1:iter]
 fem.ri.update <- fem.ri[1:iter]
 drugip.ri.update <- drugip.ri[1:iter]
 TAR.ri.update <- TAR.ri[1:iter]
@@ -1461,6 +1464,7 @@ for (k in 1:kappa.n) {
   wedu.mean <- mean(wedu.ri.update, na.rm=T); wedu.sd <- sd(wedu.ri.update, na.rm=T)
   hhmem.mean <- mean(hhmem.ri.update, na.rm=T); hhmem.sd <- sd(hhmem.ri.update, na.rm=T)
   pnc.mean <- mean(pnc.ri.update, na.rm=T); pnc.sd <- sd(pnc.ri.update, na.rm=T)
+  wbmi.mean <- mean(wbmi.ri.update, na.rm=T); wbmi.sd <- sd(wbmi.ri.update, na.rm=T)
   fem.mean <- mean(fem.ri.update, na.rm=T); fem.sd <- sd(fem.ri.update, na.rm=T)
   drugip.mean <- mean(drugip.ri.update, na.rm=T); drugip.sd <- sd(drugip.ri.update, na.rm=T)
   TAR.mean <- mean(TAR.ri.update, na.rm=T); TAR.sd <- sd(TAR.ri.update, na.rm=T)
@@ -1475,6 +1479,7 @@ for (k in 1:kappa.n) {
     wedu.ri.update[u] <- ifelse((wedu.ri.update[u] < (wedu.mean-kappa*wedu.sd) | wedu.ri.update[u] > (wedu.mean+kappa*wedu.sd)), NA, wedu.ri.update[u])
     hhmem.ri.update[u] <- ifelse((hhmem.ri.update[u] < (hhmem.mean-kappa*wedu.sd) | hhmem.ri.update[u] > (hhmem.mean+kappa*wedu.sd)), NA, hhmem.ri.update[u])
     pnc.ri.update[u] <- ifelse((pnc.ri.update[u] < (pnc.mean-kappa*pnc.sd) | pnc.ri.update[u] > (pnc.mean+kappa*pnc.sd)), NA, pnc.ri.update[u])
+    wbmi.ri.update[u] <- ifelse((wbmi.ri.update[u] < (wbmi.mean-kappa*wbmi.sd) | wbmi.ri.update[u] > (wbmi.mean+kappa*wbmi.sd)), NA, wbmi.ri.update[u])
     fem.ri.update[u] <- ifelse((fem.ri.update[u] < (fem.mean-kappa*fem.sd) | fem.ri.update[u] > (fem.mean+kappa*fem.sd)), NA, fem.ri.update[u])
     drugip.ri.update[u] <- ifelse((drugip.ri.update[u] < (drugip.mean-kappa*drugip.sd) | drugip.ri.update[u] > (drugip.mean+kappa*drugip.sd)), NA, drugip.ri.update[u])
     TAR.ri.update[u] <- ifelse((TAR.ri.update[u] < (TAR.mean-kappa*TAR.sd) | TAR.ri.update[u] > (TAR.mean+kappa*TAR.sd)), NA, TAR.ri.update[u])
@@ -1504,6 +1509,10 @@ pnc.ri.lo <- quantile(pnc.ri.update, probs=0.025, na.rm=TRUE)
 pnc.ri.med <- median(pnc.ri.update, na.rm=TRUE)
 pnc.ri.up <- quantile(pnc.ri.update, probs=0.975, na.rm=TRUE)
 
+wbmi.ri.lo <- quantile(wbmi.ri.update, probs=0.025, na.rm=TRUE)
+wbmi.ri.med <- median(wbmi.ri.update, na.rm=TRUE)
+wbmi.ri.up <- quantile(wbmi.ri.update, probs=0.975, na.rm=TRUE)
+
 fem.ri.lo <- quantile(fem.ri.update, probs=0.025, na.rm=TRUE)
 fem.ri.med <- median(fem.ri.update, na.rm=TRUE)
 fem.ri.up <- quantile(fem.ri.update, probs=0.975, na.rm=TRUE)
@@ -1520,9 +1529,9 @@ PRCP.ri.lo <- quantile(PRCP.ri.update, probs=0.025, na.rm=TRUE)
 PRCP.ri.med <- median(PRCP.ri.update, na.rm=TRUE)
 PRCP.ri.up <- quantile(PRCP.ri.update, probs=0.975, na.rm=TRUE)
 
-ri.lo <- c(wedu.ri.lo,hhmem.ri.lo,pnc.ri.lo,fem.ri.lo,drugip.ri.lo,TAR.ri.lo,PRCP.ri.lo)
-ri.med <- c(wedu.ri.med,hhmem.ri.med,pnc.ri.med,fem.ri.med,drugip.ri.med,TAR.ri.med,PRCP.ri.med)
-ri.up <- c(wedu.ri.up,hhmem.ri.up,pnc.ri.up,fem.ri.up,drugip.ri.up,TAR.ri.up,PRCP.ri.up)
+ri.lo <- c(wedu.ri.lo,hhmem.ri.lo,pnc.ri.lo,wbmi.ri.lo,fem.ri.lo,drugip.ri.lo,TAR.ri.lo,PRCP.ri.lo)
+ri.med <- c(wedu.ri.med,hhmem.ri.med,pnc.ri.med,wbmi.ri.med,fem.ri.med,drugip.ri.med,TAR.ri.med,PRCP.ri.med)
+ri.up <- c(wedu.ri.up,hhmem.ri.up,pnc.ri.up,wbmi.ri.up,fem.ri.up,drugip.ri.up,TAR.ri.up,PRCP.ri.up)
 ri.out <- as.data.frame(cbind(ri.med,ri.up,ri.lo))
 rownames(ri.out) <- out.colnames
 PHASE5.ri.sort <- ri.out[order(ri.out[,1], decreasing=T), ]
@@ -1531,7 +1540,7 @@ PHASE5.ri.sort
 PHASE5.ri.plt <- ggplot(PHASE5.ri.sort) +
   geom_bar(aes(x=reorder(row.names(PHASE5.ri.sort), ri.med), y=ri.med), stat="identity", fill="blue", alpha=0.7) +
   geom_errorbar( aes(x=row.names(PHASE5.ri.sort), ymin=ri.lo, ymax=ri.up),
-                 linewidth=0.4, colour="black", alpha=0.9, size=0.3)
+                 width=0.4, colour="black", alpha=0.9, size=0.3)
 PHASE5.ri.plt + coord_flip() +
   xlab("relative influence") + ylab("")
 
