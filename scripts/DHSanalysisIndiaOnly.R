@@ -23,7 +23,6 @@ estBetaParams <- function(mu, var) {
 }
 
 # reading the preprocessed DHS data for all countries - imputed data
-#setwd("~/Documents/Papers/Health/DHS")
 u5dat <- try(read.csv("Final_cluster_level_data.csv"), silent = TRUE)
 head(u5dat)
 str(u5dat)
@@ -1572,6 +1571,6 @@ polygon(c(RESP.val.dat$wage, rev(RESP.val.dat$wage)), c(PHASE5.pred.up[,3], rev(
         col="lightblue", density=30)
 par(mfrow=c(1,1))
 
-save.image('DHSresampledBRTINDIAM2Ultra.RData')
+save.image('DHSresampledBRTINDIA.RData')
 
 
