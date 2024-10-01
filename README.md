@@ -28,7 +28,8 @@ Fatima, SH, MA Judge, PN Le Souëf, CJA Bradshaw. Impact of climate change on di
 - <code>DHSDiarrProcessing_3.R</code>: R code for imputation of variables with missing data.
 - <code>DHSDiarrProcessing_4.R</code>: R code for processing of raster data.
 - <code>DHSDiarrProcessing_5.R</code>: R code for processing of variables at the cluster level and standardization.
-- <code>DHSDiarrAnalysis.R</code>: R code to reproduce the resampled boosted regression tree analysis for determining the relationships between probability of diarrhoea, and socio-economic, maternal, child, climate data.
+- <code>DHSDiarrAnalysis.R</code>: R code to reproduce the resampled boosted regression tree analysis for determining the relationships between probability of diarrhoea, and socio-economic, maternal, child, climate data (full dataset).
+- <code>DHSDiarrAnalysisIndaOnly.R</code>: R code to reproduce the resampled boosted regression tree analysis for determining the relationships between probability of diarrhoea, and socio-economic, maternal, child, climate data (India only).
 
 ## <a href="https://github.com/cjabradshaw/childDiarr/tree/main/data/brtdata">Data</a>
 - <em>DHSclusterLevelDiarrData.csv.zip</em>: <a href="https://dhsprogram.com/data/">Demographic and Health Surveys</a> data summarised by cluster with central parameter (mean, proportion, etc.) and variance per cluster. Overlaid (cluster-level) climate data derived from <a href="https://www.worldclim.org/">WorldClim</a> <a href="https://www.worldclim.org/data/bioclim.html">bioclimatic variables</a> (mean annual temperature, temperature annual range, total annual precipitation, precipitation seasonality, and precipitation of the driest quarter). Unzip .csv data file prior to analysis.
