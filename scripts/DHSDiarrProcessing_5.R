@@ -82,7 +82,7 @@ u5sub$acchc <- ifelse(u5sub$access_healthcare == 1, 1, 0)
 acchcp <- as.vector(xtabs(u5sub$acchc ~ u5sub$clust) / clustn)
 acchcv <- acchcp * (1 - acchcp)
 
-# region (Bernoulli; 0 = urban; 1 = rural)
+# region (Bernoulli; 0 = rural; 1 = urban)
 
 u5sub$region[u5sub$region == 7] <- NA
 u5sub$regionc <- ifelse(u5sub$region == 1, 1, 0)
