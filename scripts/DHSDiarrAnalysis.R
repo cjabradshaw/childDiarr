@@ -17,9 +17,21 @@ library(truncnorm)
 
 # functions
 estBetaParams <- function(mu, var) {
+  if (mu <= 0 || mu >= 1) {
+    stop("mu must be between 0 and 1")
+  }
+  if (var <= 0) {
+    stop("var must be positive")
+  }
+  
   alpha <- ((1 - mu) / var - 1 / mu) * mu ^ 2
   beta <- alpha * (1 / mu - 1)
-  return(params = list(alpha = alpha, beta = beta))
+  
+  if (is.na(alpha) || is.na(beta) || alpha <= 0 || beta <= 0) {
+    stop("Invalid parameters calculated. Please check the input values.")
+  }
+  
+  return(list(alpha = alpha, beta = beta))
 }
 
 # reading the preprocessed DHS data for all countries - imputed data
