@@ -1,6 +1,6 @@
 # Analysing DHS data for child health-climate relationships - India Only
 # Hira Fatima & Corey Bradshaw
-# September 2024
+# October 2024
 
 #rm(list = ls())
 
@@ -23,7 +23,7 @@ estBetaParams <- function(mu, var) {
 }
 
 # reading the preprocessed DHS data for all countries - imputed data
-u5dat <- try(read.csv("Final_cluster_level_data.csv"), silent = TRUE)
+u5dat <- try(read.csv("DHSclusterLevelDiarrData.csv"), silent = TRUE)
 head(u5dat)
 str(u5dat)
 
@@ -134,6 +134,16 @@ hist(u5dat$PRCPDQmn)
 u5dat$PRCPDQsd <- u5dat$wc2.1_30s_bio_17_sd_summary
 hist(u5dat$PRCPDQsd)
 
+u5dat$TWMmn <- u5dat$wc2.1_30s_bio_5_mean_summary # temperature of the warmest month
+hist(u5dat$TWMmn)
+u5dat$TWMsd <- u5dat$wc2.1_30s_bio_5_sd_summary
+hist(u5dat$TWMsd)
+
+u5dat$PWMmn <- u5dat$wc2.1_30s_bio_13_mean_summary # precipitation of the wettest month
+hist(u5dat$PWMmn)
+u5dat$PWMsd <- u5dat$wc2.1_30s_bio_13_sd_summary
+hist(u5dat$PWMsd)
+
 # create country variable
 u5dat$cntry <- substr(u5dat$clust, start=1, stop=2)
 table(u5dat$cntry)
@@ -189,6 +199,7 @@ plot(PHASE1vars$hhsexp, PHASE1vars$diarp, pch=19, xlab="household head gender", 
 
 ## iterate resampled boosted regression trees
 iter <- 1000
+itdiv <- iter/100
 eq.sp.points <- 100
 spatsampn <- 2000 # number of clusters to resample randomly at each iteration
 
@@ -331,7 +342,7 @@ for (i in 1:iter) {
   colnames(RESP.wlth)[2] <- "pred"
   wlth.mat[i,] <- RESP.wlth[,2]
   
-  print(i)
+  if (i %% itdiv==0) print(i)
   
 } # end i
 
@@ -608,7 +619,7 @@ plot(PHASE2vars$wbmimn, PHASE2vars$diarp, pch=19, xlab="woman bmi", ylab="diarrh
     val.arr[, , i] <- as.matrix(RESP.val.dat)
     pred.arr[, , i] <- as.matrix(RESP.pred.dat)
     
-    print(i)
+    if (i %% itdiv==0) print(i)
     
   } # end i
   
@@ -701,7 +712,7 @@ plot(PHASE2vars$wbmimn, PHASE2vars$diarp, pch=19, xlab="woman bmi", ylab="diarrh
   PHASE2.ri.plt <- ggplot(PHASE2.ri.sort) +
     geom_bar(aes(x=reorder(row.names(PHASE2.ri.sort), ri.med), y=ri.med), stat="identity", fill="blue", alpha=0.7) +
     geom_errorbar( aes(x=row.names(PHASE2.ri.sort), ymin=ri.lo, ymax=ri.up),
-                   width=0.4, colour="black", alpha=0.9, size=0.3)
+                   linewidth=0.4, colour="black", alpha=0.9, size=0.3)
   PHASE2.ri.plt + coord_flip() +
     xlab("relative influence") + ylab("")
   
@@ -859,7 +870,7 @@ for (i in 1:iter) {
 
   brthsz.mat[i,] <- RESP.brthsz[,2]
   
-  print(i)
+  if (i %% itdiv==0) print(i)
   
 } # end i
 
@@ -974,33 +985,33 @@ PHASE3.ri.sort
 PHASE3.ri.plt <- ggplot(PHASE3.ri.sort) +
   geom_bar(aes(x=reorder(row.names(PHASE3.ri.sort), ri.med), y=ri.med), stat="identity", fill="blue", alpha=0.7) +
   geom_errorbar( aes(x=row.names(PHASE3.ri.sort), ymin=ri.lo, ymax=ri.up),
-                 width=0.4, colour="black", alpha=0.9, size=0.3)
+                 linewidth=0.4, colour="black", alpha=0.9, size=0.3)
 PHASE3.ri.plt + coord_flip() +
   xlab("relative influence") + ylab("")
 
 
 ## PHASE 4 - climate variables
-# mean annual temperature, temperature annual range, annual precipitation, precipitation seasonality,
-# precipitation driest quarter
-# MATmn (MATsd); TARmn (TARsd); PRCPmn (PRCPsd); PRCPSNSmn (PRCPSNSsd); PRCPDQmn (PRCPDQsd)
+# temperature warmest month, temperature annual range, precipitation seasonality,
+# precipitation wettest month
+# TWMmn (TWMsd); TARmn (TARsd); PRCPSNSmn (PRCPSNSsd); PWMmn (PWMsd)
 
 PHASE4vars <- u5datIND %>%
-  dplyr::select(cntry, clust, diarp, diarv, MATmn, MATsd, TARmn, TARsd, PRCPmn, PRCPsd,
-                PRCPSNSmn, PRCPSNSsd, PRCPDQmn, PRCPDQsd)
+  dplyr::select(cntry, clust, diarp, diarv, TWMmn, TWMsd, TARmn, TARsd,
+                PRCPSNSmn, PRCPSNSsd, PWMmn, PWMsd)
 head(PHASE4vars)
-head(PHASE4vars[,c(5,7,9,11,13)])
+head(PHASE4vars[,c(5,7,9,11)])
 dim(PHASE4vars)
 PHASE4vars.naomit <- na.omit(PHASE4vars)
 dim(PHASE4vars.naomit)
 
 # variance inflation factor
-usdm::vif(PHASE4vars.naomit[,c(5,7,9,11,13)])
+usdm::vif(PHASE4vars.naomit[,c(5,7,9,11)])
 
 # deterministic BRT with means only
-PHASE4.brt.dtrm.mn <- gbm.step(PHASE4vars.naomit, gbm.x = attr(PHASE4vars.naomit, "names")[c(5,7,9,11,13)],
+PHASE4.brt.dtrm.mn <- gbm.step(PHASE4vars.naomit, gbm.x = attr(PHASE4vars.naomit, "names")[c(5,7,9,11)],
                                gbm.y = attr(PHASE4vars.naomit, "names")[3],
                                family="gaussian", max.trees=1000000, tolerance = 0.01,
-                               learning.rate = 0.01, bag.fraction=0.75, tree.complexity = 2)
+                               learning.rate = 0.001, bag.fraction=0.75, tree.complexity = 2, step.size=20)
 summary(PHASE4.brt.dtrm.mn)
 gbm.plot(PHASE4.brt.dtrm.mn)
 gbm.plot.fits(PHASE4.brt.dtrm.mn)
@@ -1010,8 +1021,8 @@ PHASE4.brt.dtrm.mn.CV.cor.se <- 100 * PHASE4.brt.dtrm.mn$cv.statistics$correlati
 print(c(PHASE4.brt.dtrm.mn.CV.cor, PHASE4.brt.dtrm.mn.CV.cor))
 
 plot(PHASE4vars$TARmn, PHASE4vars$diarp, pch=19, xlab="temperature annual range", ylab="diarrhoea pr")
-plot(PHASE4vars$PRCPmn, PHASE4vars$diarp, pch=19, xlab="annual precipitation", ylab="diarrhoea pr")
-plot(PHASE4vars$MATmn, PHASE4vars$diarp, pch=19, xlab="mean annual temperature", ylab="diarrhoea pr")
+plot(PHASE4vars$PWMmn, PHASE4vars$diarp, pch=19, xlab="precipitation wettest month", ylab="diarrhoea pr")
+plot(PHASE4vars$TWMmn, PHASE4vars$diarp, pch=19, xlab="temperature warmest month", ylab="diarrhoea pr")
 
 
 ## iterate resampled boosted regression trees
@@ -1019,13 +1030,13 @@ iter <- 1000
 eq.sp.points <- 100
 
 # create storage arrays
-out.colnames <- c("MAT", "TAR", "PRCP", "PRCPSNS", "PRCPDQ")
-val.arr <- pred.arr <- array(data = NA, dim=c(eq.sp.points, length=5, iter),
+out.colnames <- c("TWM", "TAR", "PRCPSNS", "PWM")
+val.arr <- pred.arr <- array(data = NA, dim=c(eq.sp.points, length=4, iter),
                              dimnames=list(paste("x",1:eq.sp.points,sep=""),
                                            out.colnames, paste("i",1:iter, sep="")))
 
 # create storage vectors
-CV.cor.vec <- CV.cor.se.vec <- MAT.ri <- TAR.ri <- PRCP.ri <- PRCPSNS.ri <- PRCPDQ.ri <- rep(NA, iter)
+CV.cor.vec <- CV.cor.se.vec <- TWM.ri <- TAR.ri <- PRCPSNS.ri <- PWM.ri <- rep(NA, iter)
 
 for (i in 1:iter) {
   
@@ -1040,22 +1051,21 @@ for (i in 1:iter) {
   diar.stoch <- ifelse(is.na(diar.stch==T), 0, diar.stch) # diarrhoea probability
   
   # continuous
-  MAT.stoch <- rnorm(length(dat.cresamp$MATmn), mean=dat.cresamp$MATmn, sd=dat.cresamp$MATsd) # mean annual temperature
+  TWM.stoch <- rnorm(length(dat.cresamp$TWMmn), mean=dat.cresamp$TWMmn, sd=dat.cresamp$TWMsd) # temperature warmest month
   TAR.stoch <- rnorm(length(dat.cresamp$TARmn), mean=dat.cresamp$TARmn, sd=dat.cresamp$TARsd) # temperature annual range
-  PRCP.stoch <- rnorm(length(dat.cresamp$PRCPmn), mean=dat.cresamp$PRCPmn, sd=dat.cresamp$PRCPsd) # annual precipitation
   PRCPSNS.stoch <- rnorm(length(dat.cresamp$PRCPSNSmn), mean=dat.cresamp$PRCPSNSmn, sd=dat.cresamp$PRCPSNSsd) # precipitation seasonality
-  PRCPDQ.stoch <- rnorm(length(dat.cresamp$PRCPDQmn), mean=dat.cresamp$PRCPDQmn, sd=dat.cresamp$PRCPDQsd) # precipitation driest quarter
+  PWM.stoch <- rnorm(length(dat.cresamp$PWMmn), mean=dat.cresamp$PWMmn, sd=dat.cresamp$PWMsd) # precipitation wettest month
   
   ## collect resampled variables into single dataframe
-  dat.resamp <- data.frame(diar.stoch,MAT.stoch,TAR.stoch,PRCP.stoch,PRCPSNS.stoch,PRCPDQ.stoch)
-  colnames(dat.resamp) <- c("diar", "MAT", "TAR", "PRCP", "PRCPSNS", "PRCPDQ")
+  dat.resamp <- data.frame(diar.stoch,TWM.stoch,TAR.stoch,PRCPSNS.stoch,PWM.stoch)
+  colnames(dat.resamp) <- c("diar", "TWM", "TAR", "PRCPSNS", "PWM")
   
   # scale
   dat.resamp.sc <- as.data.frame(scale(dat.resamp, center=T, scale=T))
   head(dat.resamp.sc)
   
   # boosted regression tree
-  brt.fit.rsmp <- gbm.step(dat.resamp.sc, gbm.x = attr(dat.resamp.sc, "names")[c(2:6)],
+  brt.fit.rsmp <- gbm.step(dat.resamp.sc, gbm.x = attr(dat.resamp.sc, "names")[c(2:5)],
                            gbm.y = attr(dat.resamp.sc, "names")[1],
                            family="gaussian", max.trees=1000000, tolerance = 0.00001,
                            learning.rate = 0.001, bag.fraction=0.5, tree.complexity = 2,
@@ -1067,7 +1077,7 @@ for (i in 1:iter) {
   
   
   if (is.null(brt.fit.rsmp) == T) {
-    brt.fit.rsmp <- gbm.step(dat.resamp.sc, gbm.x = attr(dat.resamp.sc, "names")[c(2:6)],
+    brt.fit.rsmp <- gbm.step(dat.resamp.sc, gbm.x = attr(dat.resamp.sc, "names")[c(2:5)],
                              gbm.y = attr(dat.resamp.sc, "names")[1],
                              family="gaussian", max.trees=1000000, tolerance = 0.000001,
                              learning.rate = 0.0001, bag.fraction=0.5, tree.complexity = 2,
@@ -1083,19 +1093,18 @@ for (i in 1:iter) {
   }
   
   # variable relative importance
-  MAT.ri[i] <- summ.fit$rel.inf[which(summ.fit$var == out.colnames[1])]
+  TWM.ri[i] <- summ.fit$rel.inf[which(summ.fit$var == out.colnames[1])]
   TAR.ri[i] <- summ.fit$rel.inf[which(summ.fit$var == out.colnames[2])]
-  PRCP.ri[i] <- summ.fit$rel.inf[which(summ.fit$var == out.colnames[3])]
-  PRCPSNS.ri[i] <- summ.fit$rel.inf[which(summ.fit$var == out.colnames[4])]
-  PRCPDQ.ri[i] <- summ.fit$rel.inf[which(summ.fit$var == out.colnames[5])]
+  PRCPSNS.ri[i] <- summ.fit$rel.inf[which(summ.fit$var == out.colnames[3])]
+  PWM.ri[i] <- summ.fit$rel.inf[which(summ.fit$var == out.colnames[4])]
   
   # goodness of fit
   CV.cor.vec[i] <- 100*brt.fit.rsmp$cv.statistics$correlation.mean
   CV.cor.se.vec[i] <- 100*brt.fit.rsmp$cv.statistics$correlation.se
   
   # response curves
-  RESP.val <- RESP.pred <- matrix(data=NA, nrow=eq.sp.points, ncol=5)
-  for (p in 1:5) {
+  RESP.val <- RESP.pred <- matrix(data=NA, nrow=eq.sp.points, ncol=4)
+  for (p in 1:4) {
     RESP.val[,p] <- plot.gbm(brt.fit.rsmp, i.var=p, continuous.resolution = eq.sp.points, return.grid=T)[,1]
     RESP.pred[,p] <- plot.gbm(brt.fit.rsmp, i.var=p, continuous.resolution = eq.sp.points, return.grid=T)[,2]
   } # end p
@@ -1107,13 +1116,13 @@ for (i in 1:iter) {
   val.arr[, , i] <- as.matrix(RESP.val.dat)
   pred.arr[, , i] <- as.matrix(RESP.pred.dat)
   
-  print(i)
+  if (i %% itdiv==0) print(i)
   
 } # end i
 
 # kappa method to reduce effects of outliers on bootstrap estimates
 kappa <- 2
-kappa.n <- 5
+kappa.n <- 4
 pred.update <- pred.arr[,,1:iter]
 
 for (k in 1:kappa.n) {
@@ -1136,21 +1145,19 @@ PHASE4.val.med <- apply(val.arr[,,1:iter], MARGIN=c(1,2), median, na.rm=T)
 PHASE4.CV.cor.update <- CV.cor.vec[1:iter]
 PHASE4.CV.cor.se.update <- CV.cor.se.vec[1:iter]
 
-MAT.ri.update <- MAT.ri[1:iter]
+TWM.ri.update <- TWM.ri[1:iter]
 TAR.ri.update <- TAR.ri[1:iter]
-PRCP.ri.update <- PRCP.ri[1:iter]
 PRCPSNS.ri.update <- PRCPSNS.ri[1:iter]
-PRCPDQ.ri.update <- PRCPDQ.ri[1:iter]
+PWM.ri.update <- PWM.ri[1:iter]
 
 for (k in 1:kappa.n) {
   PHASE4.CV.cor.mean <- mean(PHASE4.CV.cor.update, na.rm=T); PHASE4.CV.cor.sd <- sd(PHASE4.CV.cor.update, na.rm=T)
   PHASE4.CV.cor.se.mean <- mean(PHASE4.CV.cor.se.update, na.rm=T); PHASE4.CV.cor.se.sd <- sd(PHASE4.CV.cor.se.update, na.rm=T)
   
-  MAT.mean <- mean(MAT.ri.update, na.rm=T); MAT.sd <- sd(MAT.ri.update, na.rm=T)
-  TAR.mean <- mean(wedu.ri.update, na.rm=T); TAR.sd <- sd(TAR.ri.update, na.rm=T)
-  PRCP.mean <- mean(PRCP.ri.update, na.rm=T); PRCP.sd <- sd(PRCP.ri.update, na.rm=T)
+  TWM.mean <- mean(TWM.ri.update, na.rm=T); TWM.sd <- sd(TWM.ri.update, na.rm=T)
+  TAR.mean <- mean(TAR.ri.update, na.rm=T); TAR.sd <- sd(TAR.ri.update, na.rm=T)
   PRCPSNS.mean <- mean(PRCPSNS.ri.update, na.rm=T); PRCPSNS.sd <- sd(PRCPSNS.ri.update, na.rm=T)
-  PRCPDQ.mean <- mean(PRCPDQ.ri.update, na.rm=T); PRCPDQ.sd <- sd(PRCPDQ.ri.update, na.rm=T)
+  PWM.mean <- mean(PWM.ri.update, na.rm=T); PWM.sd <- sd(PWM.ri.update, na.rm=T)
   
   for (u in 1:iter) {
     PHASE4.CV.cor.update[u] <- ifelse((PHASE4.CV.cor.update[u] < (PHASE4.CV.cor.mean-kappa*PHASE4.CV.cor.sd) | PHASE4.CV.cor.update[u] >
@@ -1158,11 +1165,10 @@ for (k in 1:kappa.n) {
     PHASE4.CV.cor.se.update[u] <- ifelse((PHASE4.CV.cor.se.update[u] < (PHASE4.CV.cor.se.mean-kappa*PHASE4.CV.cor.se.sd) | PHASE4.CV.cor.se.update[u]
                                           > (PHASE4.CV.cor.se.mean+kappa*PHASE4.CV.cor.se.sd)), NA, PHASE4.CV.cor.se.update[u])
     
-    MAT.ri.update[u] <- ifelse((MAT.ri.update[u] < (MAT.mean-kappa*MAT.sd) | MAT.ri.update[u] > (MAT.mean+kappa*MAT.sd)), NA, MAT.ri.update[u])
+    TWM.ri.update[u] <- ifelse((TWM.ri.update[u] < (TWM.mean-kappa*TWM.sd) | TWM.ri.update[u] > (TWM.mean+kappa*TWM.sd)), NA, TWM.ri.update[u])
     TAR.ri.update[u] <- ifelse((TAR.ri.update[u] < (TAR.mean-kappa*TAR.sd) | TAR.ri.update[u] > (TAR.mean+kappa*TAR.sd)), NA, TAR.ri.update[u])
-    PRCP.ri.update[u] <- ifelse((PRCP.ri.update[u] < (PRCP.mean-kappa*PRCP.sd) | PRCP.ri.update[u] > (PRCP.mean+kappa*PRCP.sd)), NA, PRCP.ri.update[u])
     PRCPSNS.ri.update[u] <- ifelse((PRCPSNS.ri.update[u] < (PRCPSNS.mean-kappa*PRCPSNS.sd) | PRCPSNS.ri.update[u] > (PRCPSNS.mean+kappa*PRCPSNS.sd)), NA, PRCPSNS.ri.update[u])
-    PRCPDQ.ri.update[u] <- ifelse((PRCPDQ.ri.update[u] < (PRCPDQ.mean-kappa*PRCPDQ.sd) | PRCPDQ.ri.update[u] > (PRCPDQ.mean+kappa*PRCPDQ.sd)), NA, PRCPDQ.ri.update[u])
+    PWM.ri.update[u] <- ifelse((PWM.ri.update[u] < (PWM.mean-kappa*PWM.sd) | PWM.ri.update[u] > (PWM.mean+kappa*PWM.sd)), NA, PWM.ri.update[u])
     
   } # end u
   
@@ -1176,29 +1182,25 @@ PHASE4.CV.cor.lo <- quantile(PHASE4.CV.cor.update, probs=0.025, na.rm=TRUE)
 PHASE4.CV.cor.up <- quantile(PHASE4.CV.cor.update, probs=0.975, na.rm=TRUE)
 print(c(PHASE4.CV.cor.lo,PHASE4.CV.cor.med,PHASE4.CV.cor.up))
 
-MAT.ri.lo <- quantile(MAT.ri.update, probs=0.025, na.rm=TRUE)
-MAT.ri.med <- median(MAT.ri.update, na.rm=TRUE)
-MAT.ri.up <- quantile(MAT.ri.update, probs=0.975, na.rm=TRUE)
+TWM.ri.lo <- quantile(TWM.ri.update, probs=0.025, na.rm=TRUE)
+TWM.ri.med <- median(TWM.ri.update, na.rm=TRUE)
+TWM.ri.up <- quantile(TWM.ri.update, probs=0.975, na.rm=TRUE)
 
 TAR.ri.lo <- quantile(TAR.ri.update, probs=0.025, na.rm=TRUE)
 TAR.ri.med <- median(TAR.ri.update, na.rm=TRUE)
 TAR.ri.up <- quantile(TAR.ri.update, probs=0.975, na.rm=TRUE)
 
-PRCP.ri.lo <- quantile(PRCP.ri.update, probs=0.025, na.rm=TRUE)
-PRCP.ri.med <- median(PRCP.ri.update, na.rm=TRUE)
-PRCP.ri.up <- quantile(PRCP.ri.update, probs=0.975, na.rm=TRUE)
-
 PRCPSNS.ri.lo <- quantile(PRCPSNS.ri.update, probs=0.025, na.rm=TRUE)
 PRCPSNS.ri.med <- median(PRCPSNS.ri.update, na.rm=TRUE)
 PRCPSNS.ri.up <- quantile(PRCPSNS.ri.update, probs=0.975, na.rm=TRUE)
 
-PRCPDQ.ri.lo <- quantile(PRCPDQ.ri.update, probs=0.025, na.rm=TRUE)
-PRCPDQ.ri.med <- median(PRCPDQ.ri.update, na.rm=TRUE)
-PRCPDQ.ri.up <- quantile(PRCPDQ.ri.update, probs=0.975, na.rm=TRUE)
+PWM.ri.lo <- quantile(PWM.ri.update, probs=0.025, na.rm=TRUE)
+PWM.ri.med <- median(PWM.ri.update, na.rm=TRUE)
+PWM.ri.up <- quantile(PWM.ri.update, probs=0.975, na.rm=TRUE)
 
-ri.lo <- c(MAT.ri.lo,TAR.ri.lo,PRCP.ri.lo,PRCPSNS.ri.lo,PRCPDQ.ri.lo)
-ri.med <- c(MAT.ri.med,TAR.ri.med,PRCP.ri.med,PRCPSNS.ri.med,PRCPDQ.ri.med)
-ri.up <- c(MAT.ri.up,TAR.ri.up,PRCP.ri.up,PRCPSNS.ri.up,PRCPDQ.ri.up)
+ri.lo <- c(TWM.ri.lo,TAR.ri.lo,PRCPSNS.ri.lo,PWM.ri.lo)
+ri.med <- c(TWM.ri.med,TAR.ri.med,PRCPSNS.ri.med,PWM.ri.med)
+ri.up <- c(TWM.ri.up,TAR.ri.up,PRCPSNS.ri.up,PWM.ri.up)
 ri.out <- as.data.frame(cbind(ri.med,ri.up,ri.lo))
 rownames(ri.out) <- out.colnames
 PHASE4.ri.sort <- ri.out[order(ri.out[,1], decreasing=T), ]
@@ -1207,7 +1209,7 @@ PHASE4.ri.sort
 PHASE4.ri.plt <- ggplot(PHASE4.ri.sort) +
   geom_bar(aes(x=reorder(row.names(PHASE4.ri.sort), ri.med), y=ri.med), stat="identity", fill="blue", alpha=0.7) +
   geom_errorbar( aes(x=row.names(PHASE4.ri.sort), ymin=ri.lo, ymax=ri.up),
-                 width=0.4, colour="black", alpha=0.9, size=0.3)
+                 linewidth=0.4, colour="black", alpha=0.9, size=0.3)
 PHASE4.ri.plt + coord_flip() +
   xlab("relative influence") + ylab("")
 
@@ -1235,24 +1237,29 @@ print(c(PHASE2.CV.cor.lo,PHASE2.CV.cor.med,PHASE2.CV.cor.up)) # mother traits
 print(c(PHASE3.CV.cor.lo,PHASE3.CV.cor.med,PHASE3.CV.cor.up)) # child traits
 print(c(PHASE4.CV.cor.lo,PHASE4.CV.cor.med,PHASE4.CV.cor.up)) # climate
 
+write.table(PHASE1.ri.sort, "PHASE1riINDIA.csv", sep=",", row.names=T)
+write.table(PHASE2.ri.sort, "PHASE2riINDIA.csv", sep=",", row.names=T)
+write.table(PHASE3.ri.sort, "PHASE3riINDIA.csv", sep=",", row.names=T)
+write.table(PHASE4.ri.sort, "PHASE4riINDIA.csv", sep=",", row.names=T)
+
 
 ## FINAL COMBINED PHASE5
-## variables to keep: wedu, hhmem, wage, pnc, stunt fem, drugip, TAR, PRCP, PRCPSNS
+## variables to keep: wedu, hhmem, wage, pnc, stunt, TAR, PRCPSNS, PWM, TWM
 PHASE5vars <- u5datIND %>%
   dplyr::select(cntry, clust, diarp, diarv, wedumn, wedusd, hhmemmn, hhmemsd, wagemn, wagesd, pncp, pncv,
-                stuntmn, stuntsd, femp, femv, drugipp, drugipv, TARmn, TARsd, PRCPmn, PRCPsd, PRCPSNSmn, PRCPSNSsd)
+                stuntmn, stuntsd, TARmn, TARsd, PRCPSNSmn, PRCPSNSsd, PWMmn, PWMsd, TWMmn, TWMsd)
 head(PHASE5vars)
-head(PHASE5vars[,c(5,7,9,11,13,15,17,19,21,23)])
+head(PHASE5vars[,c(5,7,9,11,13,15,17,19,21)])
 dim(PHASE5vars)
 PHASE5vars.naomit <- na.omit(PHASE5vars)
 dim(PHASE5vars.naomit)
 head(PHASE5vars.naomit)
 
 # variance inflation factor
-usdm::vif(PHASE5vars.naomit[,c(5,7,9,11,13,15,17,19,21,23)])
+usdm::vif(PHASE5vars.naomit[,c(5,7,9,11,13,15,17,19,21)])
 
 # deterministic BRT with means only
-PHASE5.brt.dtrm.mn <- gbm.step(PHASE5vars.naomit, gbm.x = attr(PHASE5vars.naomit, "names")[c(5,7,9,11,13,15,17,19,21,23)],
+PHASE5.brt.dtrm.mn <- gbm.step(PHASE5vars.naomit, gbm.x = attr(PHASE5vars.naomit, "names")[c(5,7,9,11,13,15,17,19,21)],
                                gbm.y = attr(PHASE5vars.naomit, "names")[3],
                                family="gaussian", max.trees=1000000, tolerance = 0.01,
                                learning.rate = 0.001, bag.fraction=0.75, tree.complexity = 2, step.size=30)
@@ -1264,24 +1271,21 @@ PHASE5.brt.dtrm.mn.CV.cor <- 100 * PHASE5.brt.dtrm.mn$cv.statistics$correlation.
 PHASE5.brt.dtrm.mn.CV.cor.se <- 100 * PHASE5.brt.dtrm.mn$cv.statistics$correlation.se
 print(c(PHASE5.brt.dtrm.mn.CV.cor, PHASE5.brt.dtrm.mn.CV.cor))
 
-plot(PHASE5vars$wedumn, PHASE5vars$diarp, pch=19, xlab="woman's education", ylab="diarrhoea pr")
-plot(PHASE5vars$TARmn, PHASE5vars$diarp, pch=19, xlab="temperature annual range", ylab="diarrhoea pr")
-plot(PHASE5vars$PRCPmn, PHASE5vars$diarp, pch=19, xlab="annual precipitation", ylab="diarrhoea pr")
-
 
 ## iterate resampled boosted regression trees
 iter <- 1000
 eq.sp.points <- 100
 
 # create storage arrays
-out.colnames <- c("wedu", "hhmem", "wage", "pnc", "stunt", "fem", "drugip", "TAR", "PRCP", "PRCPSNS")
-val.arr <- pred.arr <- array(data = NA, dim=c(eq.sp.points, length=10, iter),
+head(PHASE5vars[,c(5,7,9,11,13,15,17,19,21)])
+out.colnames <- c("wedu", "hhmem", "wage", "pnc", "stunt", "TAR", "PRCPSNS", "PWM", "TWM")
+val.arr <- pred.arr <- array(data = NA, dim=c(eq.sp.points, length=9, iter),
                              dimnames=list(paste("x",1:eq.sp.points,sep=""),
                                            out.colnames, paste("i",1:iter, sep="")))
 
 # create storage vectors
-CV.cor.vec <- CV.cor.se.vec <- wedu.ri <- hhmem.ri <- wage.ri <- pnc.ri <- stunt.ri <- fem.ri <- drugip.ri <-
-    TAR.ri <- PRCP.ri <- PRCPSNS.ri <- rep(NA, iter)
+CV.cor.vec <- CV.cor.se.vec <- wedu.ri <- hhmem.ri <- wage.ri <- pnc.ri <- stunt.ri <-
+    TAR.ri <- PRCPSNS.ri <- PWM.ri <- TWM.ri <- rep(NA, iter)
 
 for (i in 1:iter) {
   
@@ -1301,29 +1305,20 @@ for (i in 1:iter) {
   wage.stoch <- truncnorm::rtruncnorm(length(dat.cresamp$wagemn), a=0, b=Inf, mean=dat.cresamp$wagemn, sd=dat.cresamp$wagesd) # woman's age
   stunt.stoch <- truncnorm::rtruncnorm(length(dat.cresamp$stuntmn), a=0, b=Inf, mean=dat.cresamp$stuntmn, sd=dat.cresamp$stuntsd) # child stunting
   TAR.stoch <- rnorm(length(dat.cresamp$TARmn), mean=dat.cresamp$TARmn, sd=dat.cresamp$TARsd) # temperature annual range
-  PRCP.stoch <- rnorm(length(dat.cresamp$PRCPmn), mean=dat.cresamp$PRCPmn, sd=dat.cresamp$PRCPsd) # annual precipitation
   PRCPSNS.stoch <- rnorm(length(dat.cresamp$PRCPSNSmn), mean=dat.cresamp$PRCPSNSmn, sd=dat.cresamp$PRCPSNSsd) # precipitation seasonality
+  PWM.stoch <- rnorm(length(dat.cresamp$PWMmn), mean=dat.cresamp$PWMmn, sd=dat.cresamp$PWMsd) # precipitation wettest month
+  TWM.stoch <- rnorm(length(dat.cresamp$TWMmn), mean=dat.cresamp$TWMmn, sd=dat.cresamp$TWMsd) # temperature warmest month
   
   # binomial probabilities
-  fem.alpha <- estBetaParams(dat.cresamp$femp, dat.cresamp$femv^2)$alpha
-  fem.beta <- estBetaParams(dat.cresamp$femp, dat.cresamp$femv^2)$beta
-  fem.stch <- rbeta(length(fem.alpha), fem.alpha, fem.beta)
-  fem.stoch <- ifelse(is.na(fem.stch==T), 0, fem.stch) # probability of child gender being female
-  
-  drugip.alpha <- estBetaParams(dat.cresamp$drugipp, dat.cresamp$drugipv^2)$alpha
-  drugip.beta <- estBetaParams(dat.cresamp$drugipp, dat.cresamp$drugipv^2)$beta
-  drugip.stch <- rbeta(length(drugip.alpha), drugip.alpha, drugip.beta)
-  drugip.stoch <- ifelse(is.na(drugip.stch==T), 0, drugip.stch) # drugs for intestinal parasites
-  
   pnc.alpha <- estBetaParams(dat.cresamp$pncp, dat.cresamp$pncv^2)$alpha
   pnc.beta <- estBetaParams(dat.cresamp$pncp, dat.cresamp$pncv^2)$beta
   pnc.stch <- rbeta(length(pnc.alpha), pnc.alpha, pnc.beta)
   pnc.stoch <- ifelse(is.na(pnc.stch==T), 0, pnc.stch) # postnatal checks probability
   
   ## collect resampled variables into single dataframe
-  dat.resamp <- data.frame(diar.stoch,wedu.stoch,hhmem.stoch,wage.stoch,pnc.stoch,stunt.stoch,fem.stoch,
-                           drugip.stoch,TAR.stoch,PRCP.stoch,PRCPSNS.stoch)
-  colnames(dat.resamp) <- c("diar", "wedu", "hhmem", "wage", "pnc", "stunt", "fem", "drugip", "TAR", "PRCP", "PRCPSNS")
+  dat.resamp <- data.frame(diar.stoch,wedu.stoch,hhmem.stoch,wage.stoch,pnc.stoch,stunt.stoch,
+                           TAR.stoch,PRCPSNS.stoch,PWM.stoch,TWM.stoch)
+  colnames(dat.resamp) <- c("diar", "wedu", "hhmem", "wage", "pnc", "stunt", "TAR", "PRCPSNS", "PWM", "TWM")
   
   # scale
   dat.resamp.sc <- na.omit(as.data.frame(scale(dat.resamp, center=T, scale=T)))
@@ -1331,7 +1326,7 @@ for (i in 1:iter) {
   
   
   # boosted regression tree
-  brt.fit.rsmp <- gbm.step(dat.resamp.sc, gbm.x = attr(dat.resamp.sc, "names")[c(2:11)],
+  brt.fit.rsmp <- gbm.step(dat.resamp.sc, gbm.x = attr(dat.resamp.sc, "names")[c(2:10)],
                            gbm.y = attr(dat.resamp.sc, "names")[1],
                            family="gaussian", max.trees=1000000, tolerance = 0.00001,
                            learning.rate = 0.001, bag.fraction=0.5, tree.complexity = 2,
@@ -1343,7 +1338,7 @@ for (i in 1:iter) {
   
   
   if (is.null(brt.fit.rsmp) == T) {
-    brt.fit.rsmp <- gbm.step(dat.resamp.sc, gbm.x = attr(dat.resamp.sc, "names")[c(2:11)],
+    brt.fit.rsmp <- gbm.step(dat.resamp.sc, gbm.x = attr(dat.resamp.sc, "names")[c(2:10)],
                              gbm.y = attr(dat.resamp.sc, "names")[1],
                              family="gaussian", max.trees=1000000, tolerance = 0.000001,
                              learning.rate = 0.0001, bag.fraction=0.5, tree.complexity = 2,
@@ -1364,19 +1359,18 @@ for (i in 1:iter) {
   wage.ri[i] <- summ.fit$rel.inf[which(summ.fit$var == out.colnames[3])]
   pnc.ri[i] <- summ.fit$rel.inf[which(summ.fit$var == out.colnames[4])]
   stunt.ri[i] <- summ.fit$rel.inf[which(summ.fit$var == out.colnames[5])]
-  fem.ri[i] <- summ.fit$rel.inf[which(summ.fit$var == out.colnames[6])]
-  drugip.ri[i] <- summ.fit$rel.inf[which(summ.fit$var == out.colnames[7])]
-  TAR.ri[i] <- summ.fit$rel.inf[which(summ.fit$var == out.colnames[8])]
-  PRCP.ri[i] <- summ.fit$rel.inf[which(summ.fit$var == out.colnames[9])]
-  PRCPSNS.ri[i] <- summ.fit$rel.inf[which(summ.fit$var == out.colnames[10])]
+  TAR.ri[i] <- summ.fit$rel.inf[which(summ.fit$var == out.colnames[6])]
+  PRCPSNS.ri[i] <- summ.fit$rel.inf[which(summ.fit$var == out.colnames[7])]
+  PWM.ri[i] <- summ.fit$rel.inf[which(summ.fit$var == out.colnames[8])]
+  TWM.ri[i] <- summ.fit$rel.inf[which(summ.fit$var == out.colnames[9])]
   
   # goodness of fit
   CV.cor.vec[i] <- 100*brt.fit.rsmp$cv.statistics$correlation.mean
   CV.cor.se.vec[i] <- 100*brt.fit.rsmp$cv.statistics$correlation.se
   
   # response curves
-  RESP.val <- RESP.pred <- matrix(data=NA, nrow=eq.sp.points, ncol=10)
-  for (p in 1:10) {
+  RESP.val <- RESP.pred <- matrix(data=NA, nrow=eq.sp.points, ncol=9)
+  for (p in 1:9) {
     RESP.val[,p] <- plot.gbm(brt.fit.rsmp, i.var=p, continuous.resolution = eq.sp.points, return.grid=T)[,1]
     RESP.pred[,p] <- plot.gbm(brt.fit.rsmp, i.var=p, continuous.resolution = eq.sp.points, return.grid=T)[,2]
   } # end p
@@ -1388,13 +1382,13 @@ for (i in 1:iter) {
   val.arr[, , i] <- as.matrix(RESP.val.dat)
   pred.arr[, , i] <- as.matrix(RESP.pred.dat)
   
-  print(i)
+  if (i %% itdiv==0) print(i)
   
 } # end i
 
 # kappa method to reduce effects of outliers on bootstrap estimates
 kappa <- 2
-kappa.n <- 10
+kappa.n <- 9
 pred.update <- pred.arr[,,1:iter]
 
 for (k in 1:kappa.n) {
@@ -1422,11 +1416,10 @@ hhmem.ri.update <- hhmem.ri[1:iter]
 wage.ri.update <- wage.ri[1:iter]
 pnc.ri.update <- pnc.ri[1:iter]
 stunt.ri.update <- stunt.ri[1:iter]
-fem.ri.update <- fem.ri[1:iter]
-drugip.ri.update <- drugip.ri[1:iter]
 TAR.ri.update <- TAR.ri[1:iter]
-PRCP.ri.update <- PRCP.ri[1:iter]
 PRCPSNS.ri.update <- PRCPSNS.ri[1:iter]
+PWM.ri.update <- PWM.ri[1:iter]
+TWM.ri.update <- TWM.ri[1:iter]
 
 for (k in 1:kappa.n) {
   PHASE5.CV.cor.mean <- mean(PHASE5.CV.cor.update, na.rm=T); PHASE5.CV.cor.sd <- sd(PHASE5.CV.cor.update, na.rm=T)
@@ -1437,11 +1430,10 @@ for (k in 1:kappa.n) {
   wage.mean <- mean(wage.ri.update, na.rm=T); wage.sd <- sd(wage.ri.update, na.rm=T)
   pnc.mean <- mean(pnc.ri.update, na.rm=T); pnc.sd <- sd(pnc.ri.update, na.rm=T)
   stunt.mean <- mean(stunt.ri.update, na.rm=T); stunt.sd <- sd(stunt.ri.update, na.rm=T)
-  fem.mean <- mean(fem.ri.update, na.rm=T); fem.sd <- sd(fem.ri.update, na.rm=T)
-  drugip.mean <- mean(drugip.ri.update, na.rm=T); drugip.sd <- sd(drugip.ri.update, na.rm=T)
   TAR.mean <- mean(TAR.ri.update, na.rm=T); TAR.sd <- sd(TAR.ri.update, na.rm=T)
-  PRCP.mean <- mean(PRCP.ri.update, na.rm=T); PRCP.sd <- sd(PRCP.ri.update, na.rm=T)
   PRCPSNS.mean <- mean(PRCPSNS.ri.update, na.rm=T); PRCPSNS.sd <- sd(PRCPSNS.ri.update, na.rm=T)
+  PWM.mean <- mean(PWM.ri.update, na.rm=T); PWM.sd <- sd(PWM.ri.update, na.rm=T)
+  TWM.mean <- mean(TWM.ri.update, na.rm=T); TWM.sd <- sd(TWM.ri.update, na.rm=T)
   
   for (u in 1:iter) {
     PHASE5.CV.cor.update[u] <- ifelse((PHASE5.CV.cor.update[u] < (PHASE5.CV.cor.mean-kappa*PHASE5.CV.cor.sd) | PHASE5.CV.cor.update[u] >
@@ -1454,11 +1446,10 @@ for (k in 1:kappa.n) {
     wage.ri.update[u] <- ifelse((wage.ri.update[u] < (wage.mean-kappa*wage.sd) | wage.ri.update[u] > (wage.mean+kappa*wage.sd)), NA, wage.ri.update[u])
     pnc.ri.update[u] <- ifelse((pnc.ri.update[u] < (pnc.mean-kappa*pnc.sd) | pnc.ri.update[u] > (pnc.mean+kappa*pnc.sd)), NA, pnc.ri.update[u])
     stunt.ri.update[u] <- ifelse((stunt.ri.update[u] < (stunt.mean-kappa*stunt.sd) | stunt.ri.update[u] > (stunt.mean+kappa*stunt.sd)), NA, stunt.ri.update[u])
-    fem.ri.update[u] <- ifelse((fem.ri.update[u] < (fem.mean-kappa*fem.sd) | fem.ri.update[u] > (fem.mean+kappa*fem.sd)), NA, fem.ri.update[u])
-    drugip.ri.update[u] <- ifelse((drugip.ri.update[u] < (drugip.mean-kappa*drugip.sd) | drugip.ri.update[u] > (drugip.mean+kappa*drugip.sd)), NA, drugip.ri.update[u])
     TAR.ri.update[u] <- ifelse((TAR.ri.update[u] < (TAR.mean-kappa*TAR.sd) | TAR.ri.update[u] > (TAR.mean+kappa*TAR.sd)), NA, TAR.ri.update[u])
-    PRCP.ri.update[u] <- ifelse((PRCP.ri.update[u] < (PRCP.mean-kappa*PRCP.sd) | PRCP.ri.update[u] > (PRCP.mean+kappa*PRCP.sd)), NA, PRCP.ri.update[u])
     PRCPSNS.ri.update[u] <- ifelse((PRCPSNS.ri.update[u] < (PRCPSNS.mean-kappa*PRCPSNS.sd) | PRCPSNS.ri.update[u] > (PRCPSNS.mean+kappa*PRCPSNS.sd)), NA, PRCPSNS.ri.update[u])
+    PWM.ri.update[u] <- ifelse((PWM.ri.update[u] < (PWM.mean-kappa*PWM.sd) | PWM.ri.update[u] > (PWM.mean+kappa*PWM.sd)), NA, PWM.ri.update[u])
+    TWM.ri.update[u] <- ifelse((TWM.ri.update[u] < (TWM.mean-kappa*TWM.sd) | TWM.ri.update[u] > (TWM.mean+kappa*TWM.sd)), NA, TWM.ri.update[u])
     
   } # end u
   
@@ -1492,29 +1483,25 @@ stunt.ri.lo <- quantile(stunt.ri.update, probs=0.025, na.rm=TRUE)
 stunt.ri.med <- median(stunt.ri.update, na.rm=TRUE)
 stunt.ri.up <- quantile(stunt.ri.update, probs=0.975, na.rm=TRUE)
 
-fem.ri.lo <- quantile(fem.ri.update, probs=0.025, na.rm=TRUE)
-fem.ri.med <- median(fem.ri.update, na.rm=TRUE)
-fem.ri.up <- quantile(fem.ri.update, probs=0.975, na.rm=TRUE)
-
-drugip.ri.lo <- quantile(drugip.ri.update, probs=0.025, na.rm=TRUE)
-drugip.ri.med <- median(drugip.ri.update, na.rm=TRUE)
-drugip.ri.up <- quantile(drugip.ri.update, probs=0.975, na.rm=TRUE)
-
 TAR.ri.lo <- quantile(TAR.ri.update, probs=0.025, na.rm=TRUE)
 TAR.ri.med <- median(TAR.ri.update, na.rm=TRUE)
 TAR.ri.up <- quantile(TAR.ri.update, probs=0.975, na.rm=TRUE)
-
-PRCP.ri.lo <- quantile(PRCP.ri.update, probs=0.025, na.rm=TRUE)
-PRCP.ri.med <- median(PRCP.ri.update, na.rm=TRUE)
-PRCP.ri.up <- quantile(PRCP.ri.update, probs=0.975, na.rm=TRUE)
 
 PRCPSNS.ri.lo <- quantile(PRCPSNS.ri.update, probs=0.025, na.rm=TRUE)
 PRCPSNS.ri.med <- median(PRCPSNS.ri.update, na.rm=TRUE)
 PRCPSNS.ri.up <- quantile(PRCPSNS.ri.update, probs=0.975, na.rm=TRUE)
 
-ri.lo <- c(wedu.ri.lo,hhmem.ri.lo,wage.ri.lo,pnc.ri.lo,stunt.ri.lo,fem.ri.lo,drugip.ri.lo,TAR.ri.lo,PRCP.ri.lo,PRCPSNS.ri.lo)
-ri.med <- c(wedu.ri.med,hhmem.ri.med,wage.ri.med,pnc.ri.med,stunt.ri.med,fem.ri.med,drugip.ri.med,TAR.ri.med,PRCP.ri.med,PRCPSNS.ri.med)
-ri.up <- c(wedu.ri.up,hhmem.ri.up,wage.ri.up,pnc.ri.up,stunt.ri.up,fem.ri.up,drugip.ri.up,TAR.ri.up,PRCP.ri.up,PRCPSNS.ri.up)
+PWM.ri.lo <- quantile(PWM.ri.update, probs=0.025, na.rm=TRUE)
+PWM.ri.med <- median(PWM.ri.update, na.rm=TRUE)
+PWM.ri.up <- quantile(PWM.ri.update, probs=0.975, na.rm=TRUE)
+
+TWM.ri.lo <- quantile(TWM.ri.update, probs=0.025, na.rm=TRUE)
+TWM.ri.med <- median(TWM.ri.update, na.rm=TRUE)
+TWM.ri.up <- quantile(TWM.ri.update, probs=0.975, na.rm=TRUE)
+
+ri.lo <- c(wedu.ri.lo,hhmem.ri.lo,wage.ri.lo,pnc.ri.lo,stunt.ri.lo,TAR.ri.lo,PRCPSNS.ri.lo,PWM.ri.lo,TWM.ri.lo)
+ri.med <- c(wedu.ri.med,hhmem.ri.med,wage.ri.med,pnc.ri.med,stunt.ri.med,TAR.ri.med,PRCPSNS.ri.med,PWM.ri.med,TWM.ri.med)
+ri.up <- c(wedu.ri.up,hhmem.ri.up,wage.ri.up,pnc.ri.up,stunt.ri.up,TAR.ri.up,PRCPSNS.ri.up,PWM.ri.up,TWM.ri.up)
 ri.out <- as.data.frame(cbind(ri.med,ri.up,ri.lo))
 rownames(ri.out) <- out.colnames
 PHASE5.ri.sort <- ri.out[order(ri.out[,1], decreasing=T), ]
@@ -1523,9 +1510,11 @@ PHASE5.ri.sort
 PHASE5.ri.plt <- ggplot(PHASE5.ri.sort) +
   geom_bar(aes(x=reorder(row.names(PHASE5.ri.sort), ri.med), y=ri.med), stat="identity", fill="blue", alpha=0.7) +
   geom_errorbar( aes(x=row.names(PHASE5.ri.sort), ymin=ri.lo, ymax=ri.up),
-                 width=0.4, colour="black", alpha=0.9, size=0.3)
+                 linewidth=0.4, colour="black", alpha=0.9, size=0.3)
 PHASE5.ri.plt + coord_flip() +
   xlab("relative influence") + ylab("")
+
+write.table(PHASE5.ri.sort, "PHASE5riINDIA.csv", sep=",", row.names=T)
 
 print(c(PHASE5.CV.cor.lo,PHASE5.CV.cor.med,PHASE5.CV.cor.up))
 
@@ -1533,17 +1522,11 @@ print(c(PHASE5.CV.cor.lo,PHASE5.CV.cor.med,PHASE5.CV.cor.up))
 ## plot predicted relationships
 head(PHASE5.pred.med)
 
-par(mfrow=c(2,3))
-plot(RESP.val.dat$TAR, PHASE5.pred.med[,8], type="l", lwd=2, lty=2,
+par(mfrow=c(2,2))
+plot(RESP.val.dat$TAR, PHASE5.pred.med[,6], type="l", lwd=2, lty=2,
      ylab="pr diarrhoea", xlab="temperature annual range",
-     ylim=c(min(PHASE5.pred.lo[,8]), max(PHASE5.pred.up[,8])))
-polygon(c(RESP.val.dat$TAR, rev(RESP.val.dat$TAR)), c(PHASE5.pred.up[,8], rev(PHASE5.pred.lo[,8])),
-        col="lightblue", density=30)
-
-plot(RESP.val.dat$PRCPSNS, PHASE5.pred.med[,10], type="l", lwd=2, lty=2,
-     ylab="pr diarrhoea", xlab="preciptation seasonality",
-     ylim=c(min(PHASE5.pred.lo[,10]), max(PHASE5.pred.up[,10])))
-polygon(c(RESP.val.dat$PRCPSNS, rev(RESP.val.dat$PRCPSNS)), c(PHASE5.pred.up[,10], rev(PHASE5.pred.lo[,10])),
+     ylim=c(min(PHASE5.pred.lo[,6]), max(PHASE5.pred.up[,6])))
+polygon(c(RESP.val.dat$TAR, rev(RESP.val.dat$TAR)), c(PHASE5.pred.up[,6], rev(PHASE5.pred.lo[,6])),
         col="lightblue", density=30)
 
 plot(RESP.val.dat$wedu, PHASE5.pred.med[,1], type="l", lwd=2, lty=2, 
@@ -1552,24 +1535,36 @@ plot(RESP.val.dat$wedu, PHASE5.pred.med[,1], type="l", lwd=2, lty=2,
 polygon(c(RESP.val.dat$wedu, rev(RESP.val.dat$wedu)), c(PHASE5.pred.up[,1], rev(PHASE5.pred.lo[,1])),
         col="lightblue", density=30)
 
-plot(RESP.val.dat$PRCP, PHASE5.pred.med[,9], type="l", lwd=2, lty=2,
-     ylab="pr diarrhoea", xlab="annual precipitation",
+plot(RESP.val.dat$PRCPSNS, PHASE5.pred.med[,7], type="l", lwd=2, lty=2,
+     ylab="pr diarrhoea", xlab="preciptation seasonality",
+     ylim=c(min(PHASE5.pred.lo[,7]), max(PHASE5.pred.up[,7])))
+polygon(c(RESP.val.dat$PRCPSNS, rev(RESP.val.dat$PRCPSNS)), c(PHASE5.pred.up[,7], rev(PHASE5.pred.lo[,7])),
+        col="lightblue", density=30)
+
+plot(RESP.val.dat$TWM, PHASE5.pred.med[,9], type="l", lwd=2, lty=2,
+     ylab="pr diarrhoea", xlab="temperature warmest month",
      ylim=c(min(PHASE5.pred.lo[,9]), max(PHASE5.pred.up[,9])))
-polygon(c(RESP.val.dat$PRCP, rev(RESP.val.dat$PRCP)), c(PHASE5.pred.up[,9], rev(PHASE5.pred.lo[,9])),
-        col="lightblue", density=30)
-
-plot(RESP.val.dat$hhmem, PHASE5.pred.med[,2], type="l",  lwd=2, lty=2,
-     ylab="pr diarrhoea", xlab="household members",
-     ylim=c(min(PHASE5.pred.lo[,2]), max(PHASE5.pred.up[,2])))
-polygon(c(RESP.val.dat$hhmem, rev(RESP.val.dat$hhmem)), c(PHASE5.pred.up[,2], rev(PHASE5.pred.lo[,2])),
-        col="lightblue", density=30)
-
-plot(RESP.val.dat$wage, PHASE5.pred.med[,3], type="l",  lwd=2, lty=2,
-     ylab="pr diarrhoea", xlab="female age (years)",
-     ylim=c(min(PHASE5.pred.lo[,3]), max(PHASE5.pred.up[,3])))
-polygon(c(RESP.val.dat$wage, rev(RESP.val.dat$wage)), c(PHASE5.pred.up[,3], rev(PHASE5.pred.lo[,3])),
+polygon(c(RESP.val.dat$TWM, rev(RESP.val.dat$TWM)), c(PHASE5.pred.up[,9], rev(PHASE5.pred.lo[,9])),
         col="lightblue", density=30)
 par(mfrow=c(1,1))
+
+
+respTAR <- data.frame("TAR"=RESP.val.dat$TAR, "diarpmn"=PHASE5.pred.med[,6],
+                      "diarpup"=PHASE5.pred.up[,6], "diarplo"=PHASE5.pred.lo[,6])
+write.table(respTAR, "respTARINDIA.csv", sep=",", row.names=F)
+
+respwedu <- data.frame("wedu"=RESP.val.dat$wedu, "diarpmn"=PHASE5.pred.med[,1],
+                       "diarpup"=PHASE5.pred.up[,1], "diarplo"=PHASE5.pred.lo[,1])
+write.table(respwedu, "respweduINDIA.csv", sep=",", row.names=F)
+
+respPRCPSNS <- data.frame("PRCPSNS"=RESP.val.dat$PRCPSNS, "diarpmn"=PHASE5.pred.med[,7],
+                      "diarpup"=PHASE5.pred.up[,7], "diarplo"=PHASE5.pred.lo[,7])
+write.table(respPRCPSNS, "respPRCPSNSINDIA.csv", sep=",", row.names=F)
+
+respTWM <- data.frame("TWM"=RESP.val.dat$TWM, "diarpmn"=PHASE5.pred.med[,9],
+                       "diarpup"=PHASE5.pred.up[,9], "diarplo"=PHASE5.pred.lo[,9])
+write.table(respwedu, "respTWMINDIA.csv", sep=",", row.names=F)
+
 
 save.image('DHSresampledBRTINDIA.RData')
 
