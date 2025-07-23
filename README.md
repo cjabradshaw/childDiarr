@@ -20,7 +20,11 @@ September 2024<br>
 Project collaborators: Dr <a href="https://www.researchgate.net/profile/Melinda-Judge">Melinda Judge</a>, Prof <a href="https://research-repository.uwa.edu.au/en/persons/peter-le-souef">Peter Le Souëf</a>, Dr <a href="https://loop.frontiersin.org/people/2658416/overview">Lewis Weeda</a>, <a href="mailto:Naomi.Hemy@thekids.org.au">Naomi Henry</a>
 <br>
 ## Focal manuscript
-Fatima, SH, MA Judge, PN Le Souëf, CJA Bradshaw. Impact of climate change on diarrhoea risk in low- and middle-income countries. In review.
+Fatima, SH, MA Judge, PN Le Souëf, CJA Bradshaw. Impact of climate change on diarrhoea risk in low- and middle-income countries. 2025. <em><strong>Environmental Research</strong></em> in press<br>
+<br>
+and (now out-of-date) pre-print:<br>
+<br>
+Fatima, SH, MA Judge, PN Le Souëf, CJA Bradshaw. 2024. <a href="http://doi.org/10.1101/2024.12.24.24319610">Impact of climate change on diarrhoea risk in low- and middle-income countries</a>. <em><strong>medRχiv</strong></em> doi:10.1101/2024.12.24.24319610
 
 ## <a href="https://github.com/cjabradshaw/childDiarr/tree/main/scripts">Scripts</a>
 <img align="right" src="www/DHSmap.jpg" alt="" width="400" style="margin-top: 20px">
@@ -41,4 +45,4 @@ Fatima, SH, MA Judge, PN Le Souëf, CJA Bradshaw. Impact of climate change on di
 
 <br>
 <br>
-<p><a href="https://www.flinders.edu.au"><img align="bottom-left" src="www/Flinders_University_Logo_Horizontal_RGB_Master.png" alt="Flinders University" width="150" style="margin-top: 20px"></a> &nbsp; <a href="https://globalecologyflinders.com"><img align="bottom-left" src="www/GEL Logo Kaurna New Transp.png" alt="Global Ecology Lab" width="85" style="margin-top: 20px"></a> &nbsp; &nbsp; <a href="https://www.uwa.edu.au/"><img align="bottom-left" src="www/UWA.png" alt="UWA" width="100" style="margin-top: 20px"></a> &nbsp; &nbsp; <a href="https://www.thekids.org.au"><img align="bottom-left" src="www/TheKids-Logo.png" alt="The Kids Research Institute" width="90" style="margin-top: 20px"></a> &nbsp; &nbsp; <a href="https://github.com/FutureChildHealth"><img align="bottom-left" src="https://github.com/cjabradshaw/childDiarr/blob/main/www/FCHlogoFinaltransp.png" alt="Future Child Health" width="180" style="margin-top: 20px"></a></p>
+<p><a href="https://www.flinders.edu.au"><img align="bottom-left" src="www/Flinders_University_Logo_Horizontal_RGB_Master.png" alt="Flinders University" width="150" style="margin-top: 20px"></a> &nbsp; <a href="https://globalecologyflinders.com"><img align="bottom-left" src="www/GEL Logo Kaurna New Transp.png" alt="Global Ecology Lab" width="85" style="margin-top: 20px"></a> &nbsp; &nbsp; <a href="https://www.uwa.edu.au/"><img align="bottom-left" src="www/UWA.png" alt="UWA" width="100" style="margin-top: 20px"></a> &nbsp; &nbsp; <a href="https://www.thekids.org.au"><img align="bottom-left" src="www/TheKids-Logo.png" alt="The Kids Research Institute" width="90" style="margin-top: 20px"></a> &nbsp; &nbsp; <a href="http://futurechildhealth.org"><img align="bottom-left" src="https://github.com/cjabradshaw/childDiarr/blob/main/www/FCHlogoFinaltransp.png" alt="Future Child Health" width="180" style="margin-top: 20px"></a></p>
