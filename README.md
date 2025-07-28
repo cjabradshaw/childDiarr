@@ -20,7 +20,7 @@ September 2024<br>
 Project collaborators: Dr <a href="https://www.researchgate.net/profile/Melinda-Judge">Melinda Judge</a>, Prof <a href="https://research-repository.uwa.edu.au/en/persons/peter-le-souef">Peter Le Souëf</a>, Dr <a href="https://loop.frontiersin.org/people/2658416/overview">Lewis Weeda</a>, <a href="mailto:Naomi.Hemy@thekids.org.au">Naomi Henry</a>
 <br>
 ## Focal manuscript
-Fatima, SH, MA Judge, PN Le Souëf, CJA Bradshaw. Impact of climate change on diarrhoea risk in low- and middle-income countries. 2025. <em><strong>Environmental Research</strong></em> in press<br>
+Fatima, SH, MA Judge, PN Le Souëf, CJA Bradshaw. <a href="http://doi.org/10.1016/j.envres.2025.122412">Impact of climate change on diarrhoea risk in low- and middle-income countries</a>. 2025. <em><strong>Environmental Research</strong></em> doi:10.1016/j.envres.2025.122412<br>
 <br>
 and (now out-of-date) pre-print:<br>
 <br>
